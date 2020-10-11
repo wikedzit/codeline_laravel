@@ -7,6 +7,10 @@ use Illuminate\Support\Facades\Storage;
 
 class DateController extends Controller
 {
+    /**
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function countWeekends(Request $request) {
         $from = strtotime($request->from);
         $to   = strtotime($request->to);
@@ -21,10 +25,12 @@ class DateController extends Controller
         $count = 0;
         while($time <= $to) {
             $day = date('w', $time);
+            //Check if day has the value of 0 or 6 ro represent Sunday and Saturday respectively
             if ($day == 0 || $day == 6) {
                 $count+=1;
             }
-            $time += ($day == 0 )? 3600 * 24 * 5: 3600 * 24;
+            $daySeconds = 3600 * 24;
+            $time += ($day == 0 )? $daySeconds * 5: $daySeconds;
         }
 
         try {

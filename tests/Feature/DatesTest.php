@@ -30,13 +30,21 @@ class DatesTest extends TestCase
     }
 
     public function testFileIsCreated() {
+        $from   = '2020-10-11';
+        $to     = '2020-10-17';
         $filename = time().".txt";
-        $response = $this->postJson('/api/weekends', ['from' => '2020-10-11', 'to'=>'2020-10-17', 'filename'=>$filename]);
+        $response = $this->postJson('/api/weekends', ['from' => $from, 'to'=>$to, 'filename'=>$filename]);
         $response->assertStatus(200)
             ->assertJson([
                 'weekends' => 2,
                 'file' => $filename
             ]);
+        Storage::assertExists($filename);
+        $content = Storage::get($filename);
+
+        $this->assertStringContainsString($from, $content);
+        $this->assertStringContainsString($to, $content);
+
         Storage::delete($filename);
     }
 }
